@@ -1,0 +1,30 @@
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body > div {
+  margin-top: 2em;
+  margin-left: 2em;
+
+}
+
+ul, ol {
+  margin-left: 1em;
+}
+
+/*Spacing between items in each div*/
+div > * {
+  margin-top: 0.5em;
+}
+
+p {
+  color: red;
+}
+
+/*Don't want bullets*/
+li {
+  list-style-type: none;
+}
