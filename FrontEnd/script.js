@@ -36,27 +36,39 @@ btnGetBooks.addEventListener('click', () => {
   //Get the book from Google books and display book title and thumbnail on page
   fetch(booksAPIURL).then(response => response.json())
     .then((data) => {        
-      data.items.forEach(element => {
-        console.log(element.volumeInfo.title);
-        skipThisBook = false;
-        try {
-         imageURL = element.volumeInfo.imageLinks.thumbnail;
-        } catch (err) {
-          skipThisBook = true;
-        }
 
-        //Get ISB13 from the industry identifiers array
-        let isbn13 = getISBN13(element.volumeInfo.industryIdentifiers);
-      
-        //Skip book if no thumbnail exists
-        if (!skipThisBook) {
-          booksList.innerHTML += `<li>${element.volumeInfo.title}</li>
-                                  <li><img src="${imageURL}"</li>
-                                  <li>ISBN13: ${isbn13}</li>`;
-          
-        }
+      if (data.items) {
+        //Start the list
+        booksList.innerHTML = `<ul>`;      
 
-      });
+        data.items.forEach(element => {
+          console.log(element.volumeInfo.title);
+          skipThisBook = false;
+          try {
+          imageURL = element.volumeInfo.imageLinks.thumbnail;
+          } catch (err) {
+            skipThisBook = true;
+          }
+
+          //Get ISB13 from the industry identifiers array
+          let isbn13 = getISBN13(element.volumeInfo.industryIdentifiers);
+        
+          //Skip book if no thumbnail exists
+          if (!skipThisBook) {
+            booksList.innerHTML += `<li>${element.volumeInfo.title}</li>
+                                    <li><img src="${imageURL}"</li>
+                                    <li>ISBN13: ${isbn13}</li>`;
+            
+          }
+
+        });
+
+        //End the list
+        booksList.innerHTML += `</ul>`;
+      } else {
+        booksList.innerHTML = 'No books found';
+      }
+
     });
 });
 

@@ -1,26 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-  <title>Document</title>
-</head>
-<body>
-  
-  <!-- Search box to get movies from Google Books -->
-  <div id="BooksListContainer">
-    <p>Books list</p>
-    Keyword: <input type="text" id="inputBook"><br>
-    Author:  <input type="text" id="inputAuthor"><br>
-    Title:   <input type="text" id="inputTitle"><br>
-    
-    <button id="btnGetBooks">Get Books</button>
-      <ul id="booksList">
-        <!--Books list will be genreated by JavaScript-->
-      </ul>
-  </div>
 
-</body>
-<script src="script.js"></script>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+  </head>
+
+  <body>
+    
+    <div class="book-search-form">
+      Keyword: <input type="text" id="inputBook"><br>
+      Author:  <input type="text" id="inputAuthor"><br>
+      Title:   <input type="text" id="inputTitle"><br>
+      <button id="btnGetBooks">Get Books</button>
+    </div>
+
+    <!-- Search box to get movies from Google Books -->
+    <div id="booksList">    
+        <!--<ul id="booksList"> -->
+          <!--Books list will be genreated by JavaScript-->
+        <!-- </ul> -->
+    </div>
+
+  </body>
+
+  <script src="script.js"></script>
+
 </html>
