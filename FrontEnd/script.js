@@ -3,21 +3,43 @@
 const BOOKSURL = "https://www.googleapis.com/books/v1/volumes?";
 const BOOKSAPILINK = "https://www.googleapis.com/books/v1/volumes?q=Broca+inauthor:sagan+intitle:cosmos";
 
+//BASE API for saving adding book to library
+const BACKEND_APILINK = 'http://localhost:8080/api/v1/books/';
+
+
 const bookQuery = document.getElementById('inputBookQuery');
 let booksList = document.getElementById('booksList');
 
 //Extract ISBN 13 from the indsutryIdentifiers array 
 function getISBN13(industryIdentArray) {
-  let isbn13 = "Not found";
+  let isbn13 = "ISBN13 Not found";
   //Extract ISBN_13
   //ISBN array is inside volumeInfo.industryIdentifies
   industryIdentArray.forEach(identElement => {
-    console.log(identElement.identifier);
+    //console.log(identElement.identifier);
     if (identElement.type === "ISBN_13") {
       isbn13 = identElement.identifier;
     }    
   });
   return isbn13;
+}
+
+//Add a book to MongoDB by sending a POST request
+function addBookToLibrary(bookId) {
+
+  console.log(`Adding bookId ${bookId} to DB`);
+  fetch(BACKEND_APILINK + "new", {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json, text/plain, */*',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({"bookId": bookId})    
+  }).then(response => response.json())
+    .then(response => {
+      console.log(response);
+      //location.reload();
+    })
 }
 
 //Get books and display in a list
@@ -39,10 +61,9 @@ btnGetBooks.addEventListener('click', () => {
 
       if (data.items) {
         //Start the list
-        booksList.innerHTML = `<ul>`;      
+        booksList.innerHTML = '';
 
         data.items.forEach(element => {
-          console.log(element.volumeInfo.title);
           skipThisBook = false;
           try {
           imageURL = element.volumeInfo.imageLinks.thumbnail;
@@ -50,21 +71,28 @@ btnGetBooks.addEventListener('click', () => {
             skipThisBook = true;
           }
 
+          const title = element.volumeInfo.title;
+          const bookId = element.id;
           //Get ISB13 from the industry identifiers array
-          let isbn13 = getISBN13(element.volumeInfo.industryIdentifiers);
+          const isbn13 = getISBN13(element.volumeInfo.industryIdentifiers);
         
           //Skip book if no thumbnail exists
           if (!skipThisBook) {
-            booksList.innerHTML += `<li>${element.volumeInfo.title}</li>
-                                    <li><img src="${imageURL}"</li>
-                                    <li>ISBN13: ${isbn13}</li>`;
+            booksList.innerHTML += `<div class="book">
+                                      <img src="${imageURL}">
+                                      <p class="book-title">${title}</p>
+                                      <p class="isbn13">${isbn13}</p>
+                                      <p>${bookId}<p>
+                                      <a href="#" onclick="addBookToLibrary('${bookId}')">Add to Library</a>
+                                    </div>`;
+
+            //console.log(booksList.innerHTML);
             
           }
 
         });
 
         //End the list
-        booksList.innerHTML += `</ul>`;
       } else {
         booksList.innerHTML = 'No books found';
       }

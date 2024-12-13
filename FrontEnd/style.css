@@ -20,11 +20,13 @@ div > * {
   margin-top: 0.5em;
 }
 
-p {
-  color: red;
-}
-
 /*Don't want bullets*/
 li {
   list-style-type: none;
+}
+
+/*line up books side by side */
+.book {
+  display: inline-block;
+  margin: 2rem;
 }
