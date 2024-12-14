@@ -15,6 +15,8 @@ const router = express.Router();
 //Route POST request on /new url to apiPostReview
 router.route("/new").post(BooksCtrl.apiPostBook);
 
+router.route("/library").get(BooksCtrl.apiGetBooks);
+
 //route GET, PUT and DELETE requests recieved on /:id url to the corresponding API
 //router.route("/:id")
 //  .get(ReviewsCtrl.apiGetReview)

@@ -25,16 +25,16 @@ function getISBN13(industryIdentArray) {
 }
 
 //Add a book to MongoDB by sending a POST request
-function addBookToLibrary(bookId, title) {
+function addBookToLibrary(bookId, title, imageURL) {
 
-  console.log(`Adding bookId ${bookId} title ${title} to DB`);
+  console.log(`Adding bookId ${bookId} title ${title} ${imageURL} to DB`);
   fetch(BACKEND_APILINK + "new", {
     method: 'POST',
     headers: {
       'Accept': 'application/json, text/plain, */*',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({"bookId": bookId, "title": title})    
+    body: JSON.stringify({"bookId": bookId, "title": title, "thumbnail": imageURL})    
   }).then(response => response.json())
     .then(response => {
       console.log(response);
@@ -48,6 +48,7 @@ btnGetBooks.addEventListener('click', () => {
   const author = inputAuthor.value;
   const title = inputTitle.value;
 
+  //URL to get books from Google books API
   const booksAPIURL = BOOKSURL + `q=${book}+inauthor:${author}+intitle:${title}`;
   //console.log(data.items);
   console.log(booksAPIURL);
@@ -66,9 +67,10 @@ btnGetBooks.addEventListener('click', () => {
         data.items.forEach(element => {
           skipThisBook = false;
           try {
-          imageURL = element.volumeInfo.imageLinks.thumbnail;
+            imageURL = element.volumeInfo.imageLinks.thumbnail;
           } catch (err) {
-            skipThisBook = true;
+              //Don't print this book if there is no image URL
+              skipThisBook = true;
           }
 
           const title = element.volumeInfo.title;
@@ -83,7 +85,7 @@ btnGetBooks.addEventListener('click', () => {
                                       <p class="book-title">${title}</p>
                                       <p class="isbn13">${isbn13}</p>
                                       <p>${bookId}<p>
-                                      <a href="#" onclick="addBookToLibrary('${bookId}', '${title}')">Add to Library</a>
+                                      <a href="#" onclick="addBookToLibrary('${bookId}', '${title}', '${imageURL}')">Add to Library</a>
                                     </div>`;
 
             //console.log(booksList.innerHTML);

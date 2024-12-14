@@ -22,13 +22,14 @@ export default class BooksDAO {
     }
   }
 
-  static async addBook(bookId, category, title) {
+  static async addBook(bookId, category, title, thumbnail) {
     try {
       //build key-value pairs
       const bookDoc = {
         bookId: bookId,
         category: category,
         title: title,
+        thumbnail: thumbnail,
       };
 
       //console.log(bookDoc);
@@ -41,5 +42,18 @@ export default class BooksDAO {
         return {error: e};
     }
   }
+
+  static async getBooks() {
+    try {
+
+      //convert reviewId to ObjectId and send to MongoDB
+      return await books.find({}).toArray();
+    } 
+    catch (e) {
+      console.error(`Unable to get books: ${e}`);
+      return {error: e};
+    }
+  }
+
 
 }

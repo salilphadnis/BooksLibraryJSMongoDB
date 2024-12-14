@@ -16,6 +16,9 @@ export default class BooksController {
       const title = req.body.title;
       console.log("title is ", title);
 
+      const thumbnail = req.body.thumbnail;
+      console.log("thumbnail: ", thumbnail);
+
       //Books category
       const category = req.body.category;
 
@@ -25,7 +28,8 @@ export default class BooksController {
       const bookResponse = await BooksDAO.addBook(
         bookId, 
         category,
-        title
+        title,
+        thumbnail
       )
 
       //Send the response back to client as JSON
@@ -35,5 +39,25 @@ export default class BooksController {
     }
 
   }
+
+
+  static async apiGetBooks(req, res, next) {
+    try {
+
+      console.log("In apiGetBooks");
+      let books = await BooksDAO.getBooks();
+
+      if (!books) {
+        res.status(404).json({error: "Not found"});
+        return;
+      }
+      //console.log(res);
+      res.json(books);
+    } catch (e) {
+      console.log(`api, ${e}`);
+      res.status(500).json({error: e});
+    }
+  }
+
 
 }
