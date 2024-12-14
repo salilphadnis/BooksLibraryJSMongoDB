@@ -25,16 +25,16 @@ function getISBN13(industryIdentArray) {
 }
 
 //Add a book to MongoDB by sending a POST request
-function addBookToLibrary(bookId) {
+function addBookToLibrary(bookId, title) {
 
-  console.log(`Adding bookId ${bookId} to DB`);
+  console.log(`Adding bookId ${bookId} title ${title} to DB`);
   fetch(BACKEND_APILINK + "new", {
     method: 'POST',
     headers: {
       'Accept': 'application/json, text/plain, */*',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({"bookId": bookId})    
+    body: JSON.stringify({"bookId": bookId, "title": title})    
   }).then(response => response.json())
     .then(response => {
       console.log(response);
@@ -83,7 +83,7 @@ btnGetBooks.addEventListener('click', () => {
                                       <p class="book-title">${title}</p>
                                       <p class="isbn13">${isbn13}</p>
                                       <p>${bookId}<p>
-                                      <a href="#" onclick="addBookToLibrary('${bookId}')">Add to Library</a>
+                                      <a href="#" onclick="addBookToLibrary('${bookId}', '${title}')">Add to Library</a>
                                     </div>`;
 
             //console.log(booksList.innerHTML);

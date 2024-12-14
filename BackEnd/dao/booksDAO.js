@@ -22,12 +22,13 @@ export default class BooksDAO {
     }
   }
 
-  static async addBook(bookId, category) {
+  static async addBook(bookId, category, title) {
     try {
       //build key-value pairs
       const bookDoc = {
         bookId: bookId,
         category: category,
+        title: title,
       };
 
       //console.log(bookDoc);
