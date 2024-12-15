@@ -59,5 +59,15 @@ export default class BooksController {
     }
   }
 
+  static async apiDeleteBook(req, res, next) {
+
+    try {
+      const bookDBId = req.params.id;
+      const bookResponse = await BooksDAO.deleteBook(bookDBId);
+      res.json({status: "success"});      
+    } catch (e) {
+      res.status(500).json({error: e.message});
+    }
+  }
 
 }

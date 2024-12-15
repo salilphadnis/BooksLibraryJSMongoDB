@@ -18,9 +18,10 @@ router.route("/new").post(BooksCtrl.apiPostBook);
 router.route("/library").get(BooksCtrl.apiGetBooks);
 
 //route GET, PUT and DELETE requests recieved on /:id url to the corresponding API
-//router.route("/:id")
+router.route("/library/:id")
+  .delete(BooksCtrl.apiDeleteBook)
+
 //  .get(ReviewsCtrl.apiGetReview)
 //  .put(ReviewsCtrl.apiUpdateReview)
-//  .delete(ReviewsCtrl.apiDeleteReview)
 
 export default router;

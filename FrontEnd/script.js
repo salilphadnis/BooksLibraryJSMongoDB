@@ -1,6 +1,4 @@
-///////////////////////////////////////////////////////////////////////////////
-  
-const BOOKSURL = "https://www.googleapis.com/books/v1/volumes?";
+  const BOOKSURL = "https://www.googleapis.com/books/v1/volumes?";
 const BOOKSAPILINK = "https://www.googleapis.com/books/v1/volumes?q=Broca+inauthor:sagan+intitle:cosmos";
 
 //BASE API for saving adding book to library
@@ -12,15 +10,17 @@ let booksList = document.getElementById('booksList');
 
 //Extract ISBN 13 from the indsutryIdentifiers array 
 function getISBN13(industryIdentArray) {
-  let isbn13 = "ISBN13 Not found";
+  let isbn13;
   //Extract ISBN_13
   //ISBN array is inside volumeInfo.industryIdentifies
-  industryIdentArray.forEach(identElement => {
-    //console.log(identElement.identifier);
-    if (identElement.type === "ISBN_13") {
-      isbn13 = identElement.identifier;
-    }    
-  });
+  if (industryIdentArray) {
+    industryIdentArray.forEach(identElement => {
+      //console.log(identElement.identifier);
+        if (identElement.type === "ISBN_13") {
+          isbn13 = identElement.identifier;
+        }          
+    });
+  }
   return isbn13;
 }
 
@@ -77,7 +77,11 @@ btnGetBooks.addEventListener('click', () => {
           const bookId = element.id;
           //Get ISB13 from the industry identifiers array
           const isbn13 = getISBN13(element.volumeInfo.industryIdentifiers);
-        
+          
+          if (!isbn13) {
+            skipThisBook = true;
+          }
+
           //Skip book if no thumbnail exists
           if (!skipThisBook) {
             booksList.innerHTML += `<div class="book">

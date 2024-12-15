@@ -5,6 +5,11 @@
   box-sizing: border-box;
 }
 
+form {
+  margin-top: 2rem;
+  margin-left: 2rem;
+}
+
 body > div {
   margin-top: 2em;
   margin-left: 2em;
@@ -29,4 +34,5 @@ li {
 .book {
   display: inline-block;
   margin: 2rem;
+  width: 8rem;
 }
