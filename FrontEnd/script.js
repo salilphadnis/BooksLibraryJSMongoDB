@@ -85,10 +85,11 @@ btnGetBooks.addEventListener('click', () => {
           //Skip book if no thumbnail exists
           if (!skipThisBook) {
             booksList.innerHTML += `<div class="book">
-                                      <img src="${imageURL}">
+                                      <div class="bk-img-container">
+                                        <img src="${imageURL}">
+                                      </div>
                                       <p class="book-title">${title}</p>
                                       <p class="isbn13">${isbn13}</p>
-                                      <p>${bookId}<p>
                                       <a href="#" onclick="addBookToLibrary('${bookId}', '${title}', '${imageURL}')">Add to Library</a>
                                     </div>`;
 

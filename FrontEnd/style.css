@@ -5,34 +5,52 @@
   box-sizing: border-box;
 }
 
-form {
+body {
+  background-color: rgb(243, 226, 148);
+}
+
+/*container for everything*/
+.container {
   margin-top: 2rem;
   margin-left: 2rem;
 }
 
-body > div {
-  margin-top: 2em;
-  margin-left: 2em;
-
+/*Style for the search form at the top of the page*/
+.book-search-form {
+  margin-top: 2rem;
 }
 
-ul, ol {
-  margin-left: 1em;
+.book-search-form input {
+  margin-bottom: 1rem;
 }
 
-/*Spacing between items in each div*/
-div > * {
-  margin-top: 0.5em;
-}
 
-/*Don't want bullets*/
-li {
-  list-style-type: none;
+
+/*container for all books*/
+#booksList {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 2rem;
 }
 
 /*line up books side by side */
 .book {
-  display: inline-block;
-  margin: 2rem;
-  width: 8rem;
+  display: flex;
+  flex-direction: column;
+  margin: 0.5rem;
+  width: 12rem;
+  background-color: white;
+  align-items: center; 
+  padding: 1rem;
+  border-radius: 0.5rem;
 }
+
+/*Styles inside the book div*/
+.book .book-title {
+  min-height: 12rem;
+}
+
+.book .bk-img-container {
+  min-height: 15rem;
+}
+

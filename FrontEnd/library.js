@@ -45,12 +45,14 @@ function getBooksFromLibrary(url) {
 
 function delFromLibrary(id) {
   console.log("In delFromLibrary", id);
+  //Call backend API to delete the book
   fetch(APILINK + id, {
     method: 'DELETE'
   }).then(res => res.json())
     .then(res => {
-      console.log(res)
-      location.reload();
+      console.log(res);
+      //display the updated library
+      getBooksFromLibrary(APILINK);
     });    
 }
   
