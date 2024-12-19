@@ -1,4 +1,4 @@
-  const BOOKSURL = "https://www.googleapis.com/books/v1/volumes?";
+const BOOKSURL = "https://www.googleapis.com/books/v1/volumes?";
 const BOOKSAPILINK = "https://www.googleapis.com/books/v1/volumes?q=Broca+inauthor:sagan+intitle:cosmos";
 
 //BASE API for saving adding book to library
@@ -37,73 +37,100 @@ function addBookToLibrary(bookId, title, imageURL) {
     body: JSON.stringify({"bookId": bookId, "title": title, "thumbnail": imageURL})    
   }).then(response => response.json())
     .then(response => {
-      console.log(response);
-      //location.reload();
+      console.log(response);      
+      location.href="./library.html";
     })
 }
 
-//Get books and display in a list
-btnGetBooks.addEventListener('click', () => {
-  const book = inputBook.value;
-  const author = inputAuthor.value;
-  const title = inputTitle.value;
+function getSearchURL() {
+  const book = document.getElementById("inputBook").value;
+  const author = document.getElementById("inputAuthor").value;
+  const title = document.getElementById("inputTitle").value;
+
+  console.log("book: ", book);
+
+  let authorString = "";
+  if (author != "") {
+    authorString = `+inauthor:${author}`;
+  }
+
+  let titleString = "";
+  if (title != "") {
+    titleString = `+intitle:${title}`;
+  }
 
   //URL to get books from Google books API
-  const booksAPIURL = BOOKSURL + `q=${book}+inauthor:${author}+intitle:${title}`;
-  //console.log(data.items);
-  console.log(booksAPIURL);
+  const booksAPIURL = BOOKSURL + `q="${book}"` + authorString + titleString;
+  return booksAPIURL;
+}
+
+function displayOneBook(imageURL, title, isbn13, bookId) {
+  
+  booksList.innerHTML += `<div class="book">
+                            <div class="bk-img-container">
+                              <img src="${imageURL}" alt="No book img">
+                            </div>
+                            <p class="book-title">${title}</p>
+                            <p class="isbn13">${isbn13}</p>
+                            <a href="#" onclick="addBookToLibrary('${bookId}', '${title}', '${imageURL}')">Add to Library</a>
+                          </div>`;
+}
+
+function displayAllBooks(data) {
 
   let imageURL;
   let skipThisBook = false;
 
+  if (data.items) {
+    //Start the list
+    booksList.innerHTML = '';
+
+    const totalItems = data.totalItems;
+    let index = 0;
+
+    data.items.forEach(element => {
+      skipThisBook = false;
+      index++;
+      try {
+        imageURL = element.volumeInfo.imageLinks.thumbnail;
+      } catch (err) {
+          //Don't print this book if there is no image URL
+          //skipThisBook = true;
+      }
+
+      const title = element.volumeInfo.title;
+      const bookId = element.id;
+      //Get ISB13 from the industry identifiers array
+      let isbn13 = getISBN13(element.volumeInfo.industryIdentifiers);
+      
+      if (!isbn13) {
+        isbn13 = "No ISBN found";
+      }
+
+      console.log("skipThisBook is ", skipThisBook);
+      //Skip book if no thumbnail exists
+      if (!skipThisBook) {
+        displayOneBook(imageURL, title, isbn13, bookId);        
+      }
+
+    });
+
+    //End the list
+  } else {
+    booksList.innerHTML = 'No books found';
+  }
+}
+
+//Get books and display in a list
+btnGetBooks.addEventListener('click', () => {
+
+  const booksAPIURL = getSearchURL();
+  console.log(booksAPIURL);
+
   //Get the book from Google books and display book title and thumbnail on page
   fetch(booksAPIURL).then(response => response.json())
     .then((data) => {        
-
-      if (data.items) {
-        //Start the list
-        booksList.innerHTML = '';
-
-        data.items.forEach(element => {
-          skipThisBook = false;
-          try {
-            imageURL = element.volumeInfo.imageLinks.thumbnail;
-          } catch (err) {
-              //Don't print this book if there is no image URL
-              skipThisBook = true;
-          }
-
-          const title = element.volumeInfo.title;
-          const bookId = element.id;
-          //Get ISB13 from the industry identifiers array
-          const isbn13 = getISBN13(element.volumeInfo.industryIdentifiers);
-          
-          if (!isbn13) {
-            skipThisBook = true;
-          }
-
-          //Skip book if no thumbnail exists
-          if (!skipThisBook) {
-            booksList.innerHTML += `<div class="book">
-                                      <div class="bk-img-container">
-                                        <img src="${imageURL}">
-                                      </div>
-                                      <p class="book-title">${title}</p>
-                                      <p class="isbn13">${isbn13}</p>
-                                      <a href="#" onclick="addBookToLibrary('${bookId}', '${title}', '${imageURL}')">Add to Library</a>
-                                    </div>`;
-
-            //console.log(booksList.innerHTML);
-            
-          }
-
-        });
-
-        //End the list
-      } else {
-        booksList.innerHTML = 'No books found';
-      }
-
+      displayAllBooks(data);
     });
 });
 
