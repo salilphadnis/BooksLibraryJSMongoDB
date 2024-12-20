@@ -6,7 +6,13 @@ const BACKEND_APILINK = 'http://localhost:8080/api/v1/books/';
 
 
 const bookQuery = document.getElementById('inputBookQuery');
-let booksList = document.getElementById('booksList');
+const booksList = document.getElementById('booksList');
+const booksNav = document.getElementById('booksNav');
+const btnGetBooks = document.getElementById('btnGetBooks');
+const anchorNextBooks = document.getElementById('nextSetOfBooks');
+
+
+let totalItems;
 
 //Extract ISBN 13 from the indsutryIdentifiers array 
 function getISBN13(industryIdentArray) {
@@ -47,7 +53,7 @@ function getSearchURL() {
   const author = document.getElementById("inputAuthor").value;
   const title = document.getElementById("inputTitle").value;
 
-  console.log("book: ", book);
+  //console.log("book: ", book);
 
   let authorString = "";
   if (author != "") {
@@ -60,7 +66,7 @@ function getSearchURL() {
   }
 
   //URL to get books from Google books API
-  const booksAPIURL = BOOKSURL + `q="${book}"` + authorString + titleString;
+  const booksAPIURL = BOOKSURL + `q="${book}"` + authorString + titleString + "&maxResults=20";
   return booksAPIURL;
 }
 
@@ -76,7 +82,7 @@ function displayOneBook(imageURL, title, isbn13, bookId) {
                           </div>`;
 }
 
-function displayAllBooks(data) {
+function displayAllBooks(data, index) {
 
   let imageURL;
   let skipThisBook = false;
@@ -85,9 +91,7 @@ function displayAllBooks(data) {
     //Start the list
     booksList.innerHTML = '';
 
-    const totalItems = data.totalItems;
-    let index = 0;
-
+    //Display all books in the html
     data.items.forEach(element => {
       skipThisBook = false;
       index++;
@@ -107,13 +111,16 @@ function displayAllBooks(data) {
         isbn13 = "No ISBN found";
       }
 
-      console.log("skipThisBook is ", skipThisBook);
       //Skip book if no thumbnail exists
       if (!skipThisBook) {
         displayOneBook(imageURL, title, isbn13, bookId);        
       }
 
     });
+
+    console.log(index);
+    //Add Prev, Next bar below the books
+    booksNav.innerHTML = `<a href="#" onclick="getNextSetOfBooks()">Next</a>`
 
     //End the list
   } else {
@@ -130,8 +137,16 @@ btnGetBooks.addEventListener('click', () => {
   //Get the book from Google books and display book title and thumbnail on page
   fetch(booksAPIURL).then(response => response.json())
     .then((data) => {        
-      displayAllBooks(data);
+
+      totalItems = data.totalItems;
+      let index = 0;
+  
+      displayAllBooks(data, index);
     });
 });
 
 
+function getNextSetOfBooks() {
+  console.log("here");
+  location.href = "./hello.html";
+}
