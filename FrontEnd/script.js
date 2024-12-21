@@ -11,6 +11,7 @@ const booksNav = document.getElementById('booksNav');
 const btnGetBooks = document.getElementById('btnGetBooks');
 const anchorNextBooks = document.getElementById('nextSetOfBooks');
 
+let index = 0;
 
 let totalItems;
 
@@ -66,7 +67,8 @@ function getSearchURL() {
   }
 
   //URL to get books from Google books API
-  const booksAPIURL = BOOKSURL + `q="${book}"` + authorString + titleString + "&maxResults=20";
+  const booksAPIURL = BOOKSURL + `q="${book}"` + authorString + titleString 
+                      + "&maxResults=20" + `&startIndex=${index}`;
   return booksAPIURL;
 }
 
@@ -82,7 +84,7 @@ function displayOneBook(imageURL, title, isbn13, bookId) {
                           </div>`;
 }
 
-function displayAllBooks(data, index) {
+function displayAllBooks(data) {
 
   let imageURL;
   let skipThisBook = false;
@@ -120,7 +122,7 @@ function displayAllBooks(data, index) {
 
     console.log(index);
     //Add Prev, Next bar below the books
-    booksNav.innerHTML = `<a href="#" onclick="getNextSetOfBooks()">Next</a>`
+    booksNav.innerHTML = `<a href="#" onclick="getNextSetOfBooks('${index}')">Next</a>`
 
     //End the list
   } else {
@@ -128,9 +130,8 @@ function displayAllBooks(data, index) {
   }
 }
 
-//Get books and display in a list
-btnGetBooks.addEventListener('click', () => {
 
+function fetchBooksandDisplay() {
   const booksAPIURL = getSearchURL();
   console.log(booksAPIURL);
 
@@ -139,14 +140,20 @@ btnGetBooks.addEventListener('click', () => {
     .then((data) => {        
 
       totalItems = data.totalItems;
-      let index = 0;
   
-      displayAllBooks(data, index);
+      displayAllBooks(data);
     });
+
+}
+
+
+//Get books and display in a list
+btnGetBooks.addEventListener('click', () => {
+  fetchBooksandDisplay(); 
 });
 
 
-function getNextSetOfBooks() {
-  console.log("here");
-  location.href = "./hello.html";
+function getNextSetOfBooks(index) {
+  fetchBooksandDisplay();
+
 }
