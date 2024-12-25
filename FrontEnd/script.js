@@ -1,3 +1,4 @@
+
 const BOOKSURL = "https://www.googleapis.com/books/v1/volumes?";
 const BOOKSAPILINK = "https://www.googleapis.com/books/v1/volumes?q=Broca+inauthor:sagan+intitle:cosmos";
 
@@ -10,6 +11,8 @@ const booksList = document.getElementById('booksList');
 const booksNav = document.getElementById('booksNav');
 const btnGetBooks = document.getElementById('btnGetBooks');
 const anchorNextBooks = document.getElementById('nextSetOfBooks');
+
+let books = [];
 
 let index = 0;
 
@@ -74,62 +77,58 @@ function getSearchURL() {
 }
 
 //Display One book card 
-function displayOneBook(imageURL, title, isbn13, bookId) {
+function displayOneBook(book) {
   
   booksList.innerHTML += `<div class="book">
                             <div class="bk-img-container">
-                              <img src="${imageURL}" alt="No book img">
+                              <img src="${book.thumbnail}" alt="No book img">
                             </div>
-                            <p class="book-title">${title}</p>
-                            <p class="isbn13">${isbn13}</p>
-                            <a href="#" onclick="addBookToLibrary('${bookId}', '${title}', '${imageURL}')">Add to Library</a>
+                            <p class="book-title">${book.title}</p>
+                            <p class="isbn13">${book.isbn13}</p>
+                            <a href="#" onclick="addBookToLibrary('${book.bookId}', '${book.title}', '${book.thumbnail}')">Add to Library</a>
                           </div>`;
 }
 
 //Display all the books in the page 20 at a time
-function displayAllBooks(data) {
+function displayAllBooks(books) {
 
-  let imageURL;
-  let skipThisBook = false;
+  //Start the list
+  booksList.innerHTML = '';
 
-  if (data.items) {
-    //Start the list
-    booksList.innerHTML = '';
-
-    //Display all books in the html
-    data.items.forEach(element => {
-      skipThisBook = false;
+  books.forEach(book => {
       index++;
-      try {
-        imageURL = element.volumeInfo.imageLinks.thumbnail;
-      } catch (err) {
-          //Don't print this book if there is no image URL
-          //skipThisBook = true;
-      }
-
-      const title = element.volumeInfo.title;
-      const bookId = element.id;
-      //Get ISB13 from the industry identifiers array
-      let isbn13 = getISBN13(element.volumeInfo.industryIdentifiers);
-      
-      if (!isbn13) {
-        isbn13 = "No ISBN found";
-      }
-
-      //Skip book if no thumbnail exists
-      if (!skipThisBook) {
-        displayOneBook(imageURL, title, isbn13, bookId);        
-      }
-
+      displayOneBook(book);
     });
 
     console.log(index);
     //Add Prev, Next bar below the books
     booksNav.innerHTML = `<a href="#" onclick="fetchBooksandDisplay()">Next</a>`
 
-    //End the list
-  } else {
-    booksList.innerHTML = 'No books found';
+}
+
+//Create an instance of book class for each item returned by google books api
+//and add to books array
+function addBooksToArray(data) {
+
+  if (data.items) {
+    data.items.forEach(element => {
+      let imageURL = "";
+
+      try {
+        imageURL = element.volumeInfo.imageLinks.thumbnail;
+      } catch (err) {
+        //No image URL, leave it blank
+      }
+
+      const title = element.volumeInfo.title;
+      const bookId = element.id;
+      //Get ISB13 from the industry identifiers array
+      let isbn13 = getISBN13(element.volumeInfo.industryIdentifiers);
+
+      //instance of book
+      const book = new Book(title, imageURL, bookId, isbn13);
+      books.push(book);
+    });
   }
 }
 
@@ -137,20 +136,24 @@ function displayAllBooks(data) {
 function fetchBooksandDisplay() {
   const booksAPIURL = getSearchURL();
   console.log(booksAPIURL);
+  books = [];
 
   //Get the book from Google books and display book title and thumbnail on page
   fetch(booksAPIURL).then(response => response.json())
     .then((data) => {        
 
       totalItems = data.totalItems;
-  
-      displayAllBooks(data);
+      
+      addBooksToArray(data); //Create array of book instances
+      //console.log(books);
+      displayAllBooks(books);
     });
 
 }
 
 //When user clicks "Get Books", button fetch the books and display
 btnGetBooks.addEventListener('click', () => {
+  console.log("here");
   index = 0;
   fetchBooksandDisplay(); 
 });
