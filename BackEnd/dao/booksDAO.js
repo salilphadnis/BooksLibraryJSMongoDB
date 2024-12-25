@@ -45,9 +45,7 @@ export default class BooksDAO {
 
   static async getBooks() {
     try {
-
-      //convert reviewId to ObjectId and send to MongoDB
-      return await books.find({}).toArray();
+      return await books.find().sort({"title":1}).toArray();
     } 
     catch (e) {
       console.error(`Unable to get books: ${e}`);

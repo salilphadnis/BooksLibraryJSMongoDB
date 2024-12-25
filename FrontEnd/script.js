@@ -49,6 +49,7 @@ function addBookToLibrary(bookId, title, imageURL) {
     })
 }
 
+//Create Google Books API URL
 function getSearchURL() {
   const book = document.getElementById("inputBook").value;
   const author = document.getElementById("inputAuthor").value;
@@ -72,6 +73,7 @@ function getSearchURL() {
   return booksAPIURL;
 }
 
+//Display One book card 
 function displayOneBook(imageURL, title, isbn13, bookId) {
   
   booksList.innerHTML += `<div class="book">
@@ -84,6 +86,7 @@ function displayOneBook(imageURL, title, isbn13, bookId) {
                           </div>`;
 }
 
+//Display all the books in the page 20 at a time
 function displayAllBooks(data) {
 
   let imageURL;
@@ -122,7 +125,7 @@ function displayAllBooks(data) {
 
     console.log(index);
     //Add Prev, Next bar below the books
-    booksNav.innerHTML = `<a href="#" onclick="getNextSetOfBooks('${index}')">Next</a>`
+    booksNav.innerHTML = `<a href="#" onclick="fetchBooksandDisplay()">Next</a>`
 
     //End the list
   } else {
@@ -130,7 +133,7 @@ function displayAllBooks(data) {
   }
 }
 
-
+//fetch books from google books api
 function fetchBooksandDisplay() {
   const booksAPIURL = getSearchURL();
   console.log(booksAPIURL);
@@ -146,14 +149,8 @@ function fetchBooksandDisplay() {
 
 }
 
-
-//Get books and display in a list
+//When user clicks "Get Books", button fetch the books and display
 btnGetBooks.addEventListener('click', () => {
+  index = 0;
   fetchBooksandDisplay(); 
 });
-
-
-function getNextSetOfBooks(index) {
-  fetchBooksandDisplay();
-
-}
